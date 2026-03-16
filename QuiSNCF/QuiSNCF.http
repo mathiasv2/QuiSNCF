@@ -1,0 +1,6 @@
+@QuiSNCF_HostAddress = http://localhost:5138
+
+GET {{QuiSNCF_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
