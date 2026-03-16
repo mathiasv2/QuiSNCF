@@ -13,6 +13,22 @@ builder.Services.AddDbContext<GameDbContext>(options =>
 
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<GameDbContext>();
+        
+        context.Database.Migrate();
+        
+        Console.WriteLine("Database migrations OK.");
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Database migration NOT OK: {ex.Message}");
+    }
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
