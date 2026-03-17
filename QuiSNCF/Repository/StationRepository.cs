@@ -13,18 +13,19 @@ public class StationRepository(GameDbContext db)
     {
         Random rdn = new Random();
         
-        int rendomId = rdn.Next(1, db.Stations.Count());
-        var station = db.Stations.ElementAt(rendomId);
+        var today = DateOnly.FromDateTime(DateTime.Today);
 
-        return station;
+        var availableStations = db.Stations
+            .Where(s => s.LastTimePlayed < today || s.LastTimePlayed > today)
+            .ToList();
+
+        if (!availableStations.Any())
+            return null;
+
+        int index = rdn.Next(availableStations.Count);
+
+        return availableStations[index];
     }
-
-    public bool HasStationBeenAlreadyPlayed(Station station)
-    {
-        var diff = station.LastTimePlayed.CompareTo(DateOnly.FromDateTime(DateTime.Today));
-        return diff < 0;
-    }
-
     public async Task CreateStation(Station station)
     {
         await db.Stations.AddAsync(station);
