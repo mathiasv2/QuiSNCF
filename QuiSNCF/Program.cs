@@ -1,5 +1,6 @@
 using QuiSNCF.Database;
 using Microsoft.EntityFrameworkCore;
+using QuiSNCF.Repository;
 using Scalar.AspNetCore;
 
 
@@ -13,6 +14,7 @@ builder.Services.AddDbContext<GameDbContext>(options =>
 
 builder.Services.AddControllers();
 
+builder.Services.AddScoped<StationRepository>();
 
 builder.Services.AddEndpointsApiExplorer();
 

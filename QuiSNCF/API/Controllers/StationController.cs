@@ -5,7 +5,8 @@ using QuiSNCF.Repository;
 namespace QuiSNCF.API.Controllers;
 
 [Route("api/[controller]")]
-public class StationController(StationRepository repo) : Controller
+[ApiController]
+public class StationController(StationRepository repo) : ControllerBase
 {
     [HttpGet("GetStation")]
     public Station GetRandomStation()
@@ -13,13 +14,7 @@ public class StationController(StationRepository repo) : Controller
         var station = repo.GetRandomStation();
         return station;
     }
-
-    [HttpGet("testInt")]
-    public int TestInt()
-    {
-        var station = repo.GetRandomStation();
-        return repo.HasStationBeenAlreadyPlayed(station);
-    }
+    
 
     [HttpPost("CreateStation")]
     public async Task CreateStation(Station station)
