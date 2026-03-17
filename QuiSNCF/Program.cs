@@ -1,6 +1,7 @@
 using QuiSNCF.Database;
 using Microsoft.EntityFrameworkCore;
 using QuiSNCF.Repository;
+using QuiSNCF.Service;
 using Scalar.AspNetCore;
 
 
@@ -14,7 +15,8 @@ builder.Services.AddDbContext<GameDbContext>(options =>
 
 builder.Services.AddControllers();
 
-builder.Services.AddScoped<StationRepository>();
+builder.Services.AddScoped<IStationRepository, StationRepository>();
+builder.Services.AddHostedService<MidnightPickerService>();
 
 builder.Services.AddEndpointsApiExplorer();
 

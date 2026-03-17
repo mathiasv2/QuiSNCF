@@ -1,15 +1,16 @@
+using Microsoft.EntityFrameworkCore;
 using QuiSNCF.Database;
 using QuiSNCF.Models;
 
 namespace QuiSNCF.Repository;
 
-public class StationRepository(GameDbContext db)
+public class StationRepository(GameDbContext db) : IStationRepository
 {
-    public async Task<Station?> GetStationById(int id)
-    {
-        return await db.Stations.FindAsync(id);
-    }
-    public Station GetRandomStation()
+    /* TODO : Finalement supprimer le background service et faire en sorte que le
+     premier joueur de la journée fasse le tirage de la journée pour tout le monde, plus simple et plus safe
+     */
+    
+    public async Task<Station> GetRandomStation()
     {
         Random rdn = new Random();
         
@@ -23,8 +24,27 @@ public class StationRepository(GameDbContext db)
             return null;
 
         int index = rdn.Next(availableStations.Count);
+        
+        await UpdateStationLastTimePlayed(index);
 
         return availableStations[index];
+    }
+
+    public async Task<Station?> GetTodayStation()
+    {
+        var today = DateOnly.FromDateTime(DateTime.Today);
+        var todaysStation = await db.Stations.Where(x => x.LastTimePlayed == today).FirstOrDefaultAsync();
+        if (todaysStation == null)
+            return null;
+        return todaysStation;
+    }
+
+    private async Task UpdateStationLastTimePlayed(int id)
+    {
+        var station = await db.Stations.FindAsync(id);
+        if (station == null)
+            return;
+        station.LastTimePlayed = DateOnly.FromDateTime(DateTime.Today);
     }
     public async Task CreateStation(Station station)
     {

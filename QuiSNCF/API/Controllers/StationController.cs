@@ -8,15 +8,17 @@ namespace QuiSNCF.API.Controllers;
 [ApiController]
 public class StationController(StationRepository repo) : ControllerBase
 {
-    [HttpGet("GetStation")]
-    public Station GetRandomStation()
+    [HttpGet("todaysStation")]
+    public async Task<Station?> GetRandomStation()
     {
-        var station = repo.GetRandomStation();
+        var station = await repo.GetTodayStation();
+        if (station == null)
+            return null;
         return station;
     }
     
 
-    [HttpPost("CreateStation")]
+    [HttpPost("createStation")]
     public async Task CreateStation(Station station)
     {
         await repo.CreateStation(station);
