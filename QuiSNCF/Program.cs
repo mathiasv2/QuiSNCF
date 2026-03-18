@@ -15,6 +15,7 @@ builder.Services.AddDbContext<GameDbContext>(options =>
 builder.Services.AddControllers();
 
 builder.Services.AddScoped<IStationRepository, StationRepository>();
+builder.Services.AddScoped<IPlayerRepository, PlayerRepository>();
 
 builder.Services.AddEndpointsApiExplorer();
 
