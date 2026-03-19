@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using QuiSNCF.Database;
+using QuiSNCF.DTO;
 using QuiSNCF.Models;
 
 namespace QuiSNCF.Repository;
@@ -27,7 +28,7 @@ public class StationRepository(GameDbContext db) : IStationRepository
         return availableStations[index];
     }
     
-    public async Task<Station?> GetTodayStation()
+    public async Task<Station?> GetOrPickTodayStation()
     {
         var today = DateOnly.FromDateTime(DateTime.Today);
         Station? todaysStation = await db.Stations.Where(x => x.LastTimePlayed == today).FirstOrDefaultAsync();
@@ -37,21 +38,45 @@ public class StationRepository(GameDbContext db) : IStationRepository
         return await GetRandomStation();
     }
 
+    private async Task<string> GetTodayStation()
+    {
+        var today = DateOnly.FromDateTime(DateTime.Today);
+        var station = await db.Stations.Where(x =>  x.LastTimePlayed == today).FirstOrDefaultAsync();
+        if (station != null)
+            return station.Name;
+        return null;
+    }
+
     private async Task UpdateStationLastTimePlayed(Station station)
     {
         station.LastTimePlayed = DateOnly.FromDateTime(DateTime.Today);
         await db.SaveChangesAsync();
     }
-    public async Task CreateStation(Station station)
+    public async Task CreateStation(CreateStationDTO station)
     {
-        await db.Stations.AddAsync(station);
+        Station newStation = new Station()
+        {
+            Name = station.Name,
+            City = station.City,
+            PictureUrl = station.PictureUrl,
+            LastTimePlayed = station.LastTimePlayed,
+            Hint = station.Hint,
+        };
+        await db.Stations.AddAsync(newStation);
         await db.SaveChangesAsync();
     }
     
     public void DeleteStation(int id)
     {
-        var station = db.Stations.FirstOrDefault(x => x.StationId == id);
+        Station? station = db.Stations.FirstOrDefault(x => x.StationId == id);
+        if (station == null)
+            return;
         db.Stations.Remove(station);
         db.SaveChanges();
+    }
+
+    public async Task<bool> IsInputRight(string input)
+    {
+        return input == await GetTodayStation();
     }
 }

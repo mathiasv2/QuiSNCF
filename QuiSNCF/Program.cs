@@ -19,7 +19,22 @@ builder.Services.AddScoped<IPlayerRepository, PlayerRepository>();
 
 builder.Services.AddEndpointsApiExplorer();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowLocalhost",
+        policy =>
+        {
+            policy.WithOrigins("http://localhost:5174")
+                .AllowAnyMethod()
+                .AllowAnyHeader();
+        });
+});
+
+
 var app = builder.Build();
+
+app.UseCors("AllowLocalhost");
+
 
 using (var scope = app.Services.CreateScope())
 {
@@ -49,6 +64,7 @@ if (app.Environment.IsDevelopment())
         options.Theme = ScalarTheme.Moon;
     });
 }
+
 
 app.UseHttpsRedirection();
 
