@@ -49,7 +49,10 @@ public class StationRepository(GameDbContext db) : IStationRepository
 
     private async Task UpdateStationLastTimePlayed(Station station)
     {
+        var positions = TodayRandomZoom();
         station.LastTimePlayed = DateOnly.FromDateTime(DateTime.Today);
+        station.RandomX = positions.x;
+        station.RandomY = positions.y;
         await db.SaveChangesAsync();
     }
     public async Task CreateStation(CreateStationDTO station)
@@ -85,6 +88,14 @@ public class StationRepository(GameDbContext db) : IStationRepository
         station.Hint = updateStation.Hint;
         db.SaveChanges();
         
+    }
+
+    private (double x, double y) TodayRandomZoom()
+    {
+        Random rdn = new Random();
+        double x = rdn.NextDouble();
+        double y = rdn.NextDouble();
+        return (x, y);
     }
 
     public async Task<bool> IsInputRight(string input)
