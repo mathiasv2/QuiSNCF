@@ -15,7 +15,8 @@ public class PlayerController(IPlayerRepository repo) : ControllerBase
     {
         if (!await repo.DoesPlayerExist(player.Name))
             await repo.CreatePlayerAsync(player);
-        await repo.UpdatePlayerScore(player.Name, player.Tries);
+        else
+            await repo.UpdatePlayerScore(player.Name, player.Tries);
     }
 
     [HttpGet("getPlayer")]

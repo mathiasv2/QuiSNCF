@@ -86,6 +86,7 @@ public class StationRepository(GameDbContext db) : IStationRepository
         station.City = updateStation.City;
         station.PictureUrl = updateStation.PictureUrl;
         station.Hint = updateStation.Hint;
+        station.LastTimePlayed = updateStation.LastTimePlayed;
         db.SaveChanges();
         
     }
